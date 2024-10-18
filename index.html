@@ -36,11 +36,15 @@
         const MIN_ZOOM_LEVEL = 0.1
         const ZOOM_STEP = 0.01
         const ACCELERATE_THRESHOLD_DEGREES = 20
+        const ACCELERATION_SPEED_FACTOR = 3
 
-        const [portraitZoomInMinDegrees, portraitZoomInMaxDegrees] = [10, 120]
-        const [portraitZoomOutMinDegrees, portraitZoomOutMaxDegrees] = [-10, -120]
-        const [landscapeZoomInMinDegrees, landscapeZoomInMaxDegrees] = [-80, 0]
-        const [landscapeZoomOutMinDegrees, landscapeZoomOutMaxDegrees] = [-100, -180]
+        // TODO detect orientation by Alpha
+        const isAlpha = false
+
+        const [portraitZoomInMinDegrees, portraitZoomInMaxDegrees] = isAlpha ? [] : [10, 120]
+        const [portraitZoomOutMinDegrees, portraitZoomOutMaxDegrees] = isAlpha ? [] : [-10, -120]
+        const [landscapeZoomInMinDegrees, landscapeZoomInMaxDegrees] = isAlpha ? [] : [-80, 0]
+        const [landscapeZoomOutMinDegrees, landscapeZoomOutMaxDegrees] = isAlpha ? [] : [-100, -180]
 
         function handleOrientationEvent(event) {
             const { alpha, beta, gamma } = event
@@ -65,13 +69,13 @@
                 if (rotationDegrees < zoomInMin + ACCELERATE_THRESHOLD_DEGREES) {
                     viewer.viewport.zoomBy(1 + ZOOM_STEP)
                 } else {
-                    viewer.viewport.zoomBy(1 + 3 * ZOOM_STEP)
+                    viewer.viewport.zoomBy(1 + ZOOM_STEP * ACCELERATION_SPEED_FACTOR)
                 }
             } else if (rotationDegrees < zoomOutMin && rotationDegrees > zoomOutMax && zoomLevel > MIN_ZOOM_LEVEL) {
                 if (rotationDegrees > zoomOutMin - ACCELERATE_THRESHOLD_DEGREES) {
                     viewer.viewport.zoomBy(1 - ZOOM_STEP)
                 } else {
-                    viewer.viewport.zoomBy(1 - 3 * ZOOM_STEP)
+                    viewer.viewport.zoomBy(1 - ZOOM_STEP * ACCELERATION_SPEED_FACTOR)
                 }
             }
         }
